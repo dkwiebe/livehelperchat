@@ -290,6 +290,11 @@ $def->properties['pending_join']->columnName   = 'pending_join';
 $def->properties['pending_join']->propertyName = 'pending_join';
 $def->properties['pending_join']->propertyType = ezcPersistentObjectProperty::PHP_TYPE_STRING;
 
+$def->properties['pending_join_queue'] = new ezcPersistentObjectProperty();
+$def->properties['pending_join_queue']->columnName   = 'pending_join_queue';
+$def->properties['pending_join_queue']->propertyName = 'pending_join_queue';
+$def->properties['pending_join_queue']->propertyType = ezcPersistentObjectProperty::PHP_TYPE_STRING;
+
 $def->properties['noonline_operators'] = new ezcPersistentObjectProperty();
 $def->properties['noonline_operators']->columnName   = 'noonline_operators';
 $def->properties['noonline_operators']->propertyName = 'noonline_operators';
@@ -396,6 +401,12 @@ $def->properties['bot_configuration'] = new ezcPersistentObjectProperty();
 $def->properties['bot_configuration']->columnName   = 'bot_configuration';
 $def->properties['bot_configuration']->propertyName = 'bot_configuration';
 $def->properties['bot_configuration']->propertyType = ezcPersistentObjectProperty::PHP_TYPE_STRING;
+
+// Stores notifications configuration as array
+$def->properties['notification_configuration'] = new ezcPersistentObjectProperty();
+$def->properties['notification_configuration']->columnName   = 'notification_configuration';
+$def->properties['notification_configuration']->propertyName = 'notification_configuration';
+$def->properties['notification_configuration']->propertyType = ezcPersistentObjectProperty::PHP_TYPE_STRING;
 
 erLhcoreClassChatEventDispatcher::getInstance()->dispatch('lhabstract.erlhabstractmodelwidgettheme.posdefinition',array('def' => & $def));
 

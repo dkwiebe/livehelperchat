@@ -28,7 +28,7 @@ $ViewList['loadpreviousmessages'] = array(
 $ViewList['subject'] = array(
     'params' => array('chat_id'),
     'uparams' => array('subject','status'),
-    'functions' => array( 'use' )
+    'functions' => array( 'setsubject' )
 );
 
 $ViewList['getnotificationsdata'] = array(
@@ -48,7 +48,7 @@ $ViewList['getcannedfiltered'] = array(
 $ViewList['holdaction'] = array(
     'params' => array('chat_id'),
     'uparams' => array(),
-    'functions' => array( 'use' )
+    'functions' => array( 'holduse' )
 );
 
 $ViewList['copymessages'] = array(
@@ -58,6 +58,11 @@ $ViewList['copymessages'] = array(
 );
 
 $ViewList['updateattribute'] = array(
+		'params' => array(),
+		'uparams' => array('hash','hash_resume','vid'),
+);
+
+$ViewList['updatejsvars'] = array(
 		'params' => array(),
 		'uparams' => array('hash','hash_resume','vid'),
 );
@@ -75,7 +80,7 @@ $ViewList['setnewvid'] = array(
 $ViewList['redirectcontact'] = array(
     'params' => array('chat_id'),
     'uparams' => array(),
-    'functions' => array( 'use' )
+    'functions' => array( 'redirectcontact' )
 );
 
 $ViewList['changestatus'] = array(
@@ -113,6 +118,11 @@ $ViewList['previewchat'] = array(
     'functions' => array( 'use' )
 );
 
+$ViewList['previewmessage'] = array(
+    'params' => array(),
+    'functions' => array( 'use' )
+);
+
 $ViewList['closechatadmin'] = array(
     'params' => array('chat_id'),
     'functions' => array( 'use' )
@@ -147,7 +157,7 @@ $ViewList['closechat'] = array(
 
 $ViewList['sendmail'] = array(
     'params' => array('chat_id'),
-    'functions' => array( 'use' )
+    'functions' => array( 'sendmail' )
 );
 
 $ViewList['modifychat'] = array(
@@ -196,8 +206,14 @@ $ViewList['loadinitialdata'] = array(
 
 $ViewList['list'] = array(
     'params' => array(),
-    'uparams' => array('subject_id','anonymized','una','chat_duration_from','chat_duration_till','wait_time_from','wait_time_till','chat_id','nick','email','timefrom','timeto','department_id','user_id','print','xls','fbst','chat_status','hum','product_id','timefrom','timefrom_minutes','timefrom_hours','timeto','timeto_minutes','timeto_hours','department_group_id','group_id'),
-    'functions' => array( 'use' )
+    'uparams' => array('ip','department_ids','department_group_ids','user_ids','group_ids','subject_id','anonymized','una','chat_duration_from','chat_duration_till','wait_time_from','wait_time_till','chat_id','nick','email','timefrom','timeto','department_id','user_id','print','xls','fbst','chat_status','hum','product_id','timefrom','timefrom_minutes','timefrom_hours','timeto', 'timeto_minutes', 'timeto_hours', 'department_group_id', 'group_id', 'invitation_id'),
+    'functions' => array( 'use' ),
+    'multiple_arguments' => array(
+        'department_ids',
+        'department_group_ids',
+        'user_ids',
+        'group_ids'
+    )
 );
 
 $ViewList['dashboardwidgets'] = array(
@@ -365,6 +381,12 @@ $ViewList['getstatus'] = array(
 	'multiple_arguments' => array ( 'department', 'ua' )
 );
 
+$ViewList['htmlsnippet'] = array(
+    'params' => array('id','type','sub_id'),
+    'uparams' => array('hash'),
+	'multiple_arguments' => array ( 'department', 'ua' )
+);
+
 $ViewList['chatcheckstatus'] = array(
     'params' => array(),
     'uparams' => array('status','department','vid','uactiv','wopen','uaction','hash','hash_resume','dot','hide_offline','isproactive'),
@@ -396,7 +418,7 @@ $ViewList['reopen'] = array(
 
 $ViewList['readoperatormessage'] = array(
     'params' => array(),
-    'uparams' => array('operator','theme','priority','vid','department','playsound','ua','survey','fullheight','inv'),
+    'uparams' => array('operator','theme','priority','vid','department','playsound','ua','survey','fullheight','inv','tag'),
 	'multiple_arguments' => array ( 'department', 'ua' )
 );
 
@@ -404,6 +426,11 @@ $ViewList['chatcheckoperatormessage'] = array(
     'params' => array(),
     'uparams' => array('tz','operator','theme','priority','vid','count_page','identifier','department','ua','survey','uactiv','wopen','fullheight','dyn'),
 	'multiple_arguments' => array ( 'department','ua','dyn' )
+);
+
+$ViewList['extendcookie'] = array(
+    'params' => array('vid'),
+    'uparams' => array()
 );
 
 $ViewList['logpageview'] = array(
@@ -419,14 +446,14 @@ $ViewList['chatwidgetclosed'] = array(
 
 $ViewList['chat'] = array(
     'params' => array('chat_id','hash'),
-    'uparams' => array('theme','er','survey')
+    'uparams' => array('theme','er','survey','cstarted')
 );
 
 $ViewList['printchat'] = array(
     'params' => array('chat_id','hash')
 );
 
-$ViewList['printchat'] = array(
+$ViewList['readchatmail'] = array(
     'params' => array('chat_id','hash')
 );
 
@@ -435,7 +462,8 @@ $ViewList['chatpreview'] = array(
 );
 
 $ViewList['bbcodeinsert'] = array(
-	'params' => array('chat_id')
+	'params' => array('chat_id'),
+	'uparams' => array('mode')
 );
 
 $ViewList['chatwidgetchat'] = array(
@@ -451,7 +479,7 @@ $ViewList['userclosechat'] = array(
 $ViewList['onlineusers'] = array(
     'params' => array(),
     'ajax' => true,
-    'uparams' => array('clear_list','method','deletevisitor','timeout','csfr','department','maxrows'),
+    'uparams' => array('clear_list','method','deletevisitor','timeout','csfr','department','maxrows','country','timeonsite'),
     'functions' => array( 'use_onlineusers' )
 );
 
@@ -480,7 +508,7 @@ $ViewList['geoconfiguration'] = array(
 
 $ViewList['listchatconfig'] = array(
     'params' => array(),
-    'functions' => array( 'use' )
+    'functions' => array( 'administrateconfig' )
 );
 
 $ViewList['editchatconfig'] = array(
@@ -490,22 +518,12 @@ $ViewList['editchatconfig'] = array(
 
 $ViewList['syncandsoundesetting'] = array(
     'params' => array(),
-    'functions' => array( 'administrateconfig' )
-);
-
-$ViewList['startchatformsettings'] = array(
-    'params' => array(),
-    'functions' => array( 'administrateconfig' )
-);
-
-$ViewList['startchatformsettingsindex'] = array(
-    'params' => array(),
-    'functions' => array( 'administrateconfig' )
+    'functions' => array( 'administratesyncsound' )
 );
 
 $ViewList['cannedmsg'] = array(
     'params' => array(),
-    'uparams' => array('action','id','csfr'),
+    'uparams' => array('action','id','csfr','message','title','fmsg','department_id'),
     'functions' => array( 'administratecannedmsg' )
 );
 
@@ -545,6 +563,7 @@ $ViewList['transferchatrefilter'] = array(
 );
 
 $FunctionList['use'] = array('explain' => 'General permission to use chat module');
+$FunctionList['open_all'] = array('explain' => 'Allow operator to open all chats, not only assigned to him');
 $FunctionList['changeowner'] = array('explain' => 'Allow operator to change chat owner');
 $FunctionList['singlechatwindow'] = array('explain' =>'Allow operator to use single chat window functionality');
 $FunctionList['allowchattabs'] = array('explain' =>'Allow operator to user chat rooms functionality');
@@ -575,6 +594,14 @@ $FunctionList['administrategeoconfig'] = array('explain' => 'Allow operator to e
 $FunctionList['manage_product'] = array('explain' => 'Allow operator to manage products');
 $FunctionList['administratesubject'] = array('explain' => 'Allow operator to manage subjects');
 $FunctionList['modifychatcore'] = array('explain' => 'Allow operator to change chat core attributes');
+$FunctionList['sendmail'] = array('explain' => 'Allow operator to send e-mail to visitor from chat window');
+$FunctionList['redirectcontact'] = array('explain' => 'Allow operator to redirect visitor to contact form');
+$FunctionList['holduse'] = array('explain' => 'Allow operator to use hold/unhold functionality');
+$FunctionList['setsubject'] = array('explain' => 'Allow operator to use set chat subject');
+$FunctionList['administratecolumn'] = array('explain' => 'Allow operator to configure chat columns');
+$FunctionList['administratechatvariable'] = array('explain' => 'Allow operator to configure chat custom variables');
+$FunctionList['administratechatpriority'] = array('explain' => 'Allow operator to configure chat priority by custom variables');
+$FunctionList['administratesyncsound'] = array('explain' => 'Allow operator to configure chat sound and sync settings');
 
 
 ?>

@@ -21,7 +21,7 @@
         <?php if (!isset($modeArchiveView) || $modeArchiveView !== 'popup') : ?>
         <div class="btn-group">
             <a href="<?php echo erLhcoreClassDesign::baseurl('chatarchive/listarchivechats')?>/<?php echo $archive->id?>" class="btn btn-primary"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('system/buttons','Return')?></a>
-            <a href="<?php echo erLhcoreClassDesign::baseurl('chatarchive/deletearchivechat')?>/<?php echo $archive->id?>/<?php echo $chat->id?>" class="csfr-required btn btn-default" onclick="return confirm('<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('kernel/message','Are you sure?')?>')"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/closedchats','Delete chat')?></a>
+            <a href="<?php echo erLhcoreClassDesign::baseurl('chatarchive/deletearchivechat')?>/<?php echo $archive->id?>/<?php echo $chat->id?>" class="csfr-required btn btn-secondary" onclick="return confirm('<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('kernel/message','Are you sure?')?>')"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/closedchats','Delete chat')?></a>
         </div>
         <?php endif; ?>
 
@@ -33,3 +33,4 @@
         <?php include(erLhcoreClassDesign::designtpl('lhchat/chat_tabs/chat_tabs_container.tpl.php')); ?>
     </div>
 </div>
+<script>ee.emitEvent('adminArchiveChatLoaded', [<?php echo $archive->id?>,<?php echo $chat->id;?>]);</script>

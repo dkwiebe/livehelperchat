@@ -32,7 +32,7 @@ class erLhcoreClassChat {
 			'lat',
 			'lon',
 			'city',
-			'additional_data',
+			//'additional_data',
 			'session_referrer',
 			'wait_time',
 			'chat_duration',
@@ -47,7 +47,7 @@ class erLhcoreClassChat {
 			'fbst',
 			'operator_typing_id',
 			'chat_initiator',
-			'chat_variables',
+			//'chat_variables',
 			// Angular remake
 			'referrer',
 			'last_op_msg_time',
@@ -59,6 +59,10 @@ class erLhcoreClassChat {
 			'auto_responder_id',
 			'chat_locale',
 			'anonymized',
+			'uagent',
+			'pnd_time',
+			'user_tz_identifier',
+			'invitation_id',
 	);
 
 	public static $limitMessages = 50;
@@ -75,6 +79,7 @@ class erLhcoreClassChat {
 
     	$filter = array();
     	$filter['filter'] = array('status' => 0);
+        $filter['use_index'] = 'status';
 
     	if ($limitation !== true) {
     		$filter['customfilter'][] = $limitation;
@@ -111,7 +116,7 @@ class erLhcoreClassChat {
         
         $filter = array();
         $filter['filterin'] = array('status' => array(0,1));
-        
+
         if ($limitation !== true) {
             $filter['customfilter'][] = $limitation;
         }
@@ -137,10 +142,10 @@ class erLhcoreClassChat {
 
     	$filter = array();
     	$filter['filter'] = array('status' => 0);
+        $filter['use_index'] = 'status';
 
     	if ($limitation !== true) {
     		$filter['customfilter'][] = $limitation;
-    		$filter['use_index'] = 'status_dep_id_id';
     	}
 
     	if (!empty($filterAdditional)) {
@@ -154,6 +159,7 @@ class erLhcoreClassChat {
     {
     	$filter = array();
     	$filter['filter'] = array('status' => 0);
+        $filter['use_index'] = 'status';
 
     	if ($department !== false && is_numeric($department)) {
     		$filter['filter']['dep_id'] = $department;
@@ -421,6 +427,13 @@ class erLhcoreClassChat {
     		}
     	}
 
+        if (isset($params['filternot']) && count($params['filternot']) > 0)
+        {
+            foreach ($params['filternot'] as $field => $fieldValue) {
+                $conditions[] = $q->expr->neq($field, $q->bindValue($fieldValue));
+            }
+        }
+
     	if (isset($params['customfilter']) && count($params['customfilter']) > 0)
     	{
     		foreach ($params['customfilter'] as $fieldValue)
@@ -502,7 +515,6 @@ class erLhcoreClassChat {
 
     	if ($limitation !== true) {
     		$filter['customfilter'][] = $limitation;
-    		$filter['use_index'] = 'has_unread_messages_dep_id_id';
     	}
     	
     	// Give 5 seconds to operator to sync a chat and avoid annoying him
@@ -535,7 +547,6 @@ class erLhcoreClassChat {
 
     	if ($limitation !== true) {
     		$filter['customfilter'][] = $limitation;
-    		$filter['use_index'] = 'has_unread_messages_dep_id_id';
     	}
 
     	if (!empty($filterAdditional)) {
@@ -554,10 +565,10 @@ class erLhcoreClassChat {
 
     	$filter = array();
     	$filter['filter'] = array('status' => 1);
+        $filter['use_index'] = 'status';
 
     	if ($limitation !== true) {
     		$filter['customfilter'][] = $limitation;
-    		$filter['use_index'] = 'status_dep_id_id';
     	}
 
     	$filter['limit'] = $limit;
@@ -580,10 +591,10 @@ class erLhcoreClassChat {
 
     	$filter = array();
     	$filter['filter'] = array('status' => 1);
+        $filter['use_index'] = 'status';
 
     	if ($limitation !== true) {
     		$filter['customfilter'][] = $limitation;
-    		$filter['use_index'] = 'status_dep_id_id';
     	}
 
     	if (!empty($filterAdditional)) {
@@ -602,10 +613,10 @@ class erLhcoreClassChat {
 
     	$filter = array();
     	$filter['filter'] = array('status' => 2);
+        $filter['use_index'] = 'status';
 
     	if ($limitation !== true) {
     		$filter['customfilter'][] = $limitation;
-    		$filter['use_index'] = 'status_dep_id_id';
     	}
 
     	$filter['limit'] = $limit;
@@ -628,10 +639,10 @@ class erLhcoreClassChat {
 
     	$filter = array();
     	$filter['filter'] = array('status' => 5);
+        $filter['use_index'] = 'status';
 
     	if ($limitation !== true) {
     		$filter['customfilter'][] = $limitation;
-    		$filter['use_index'] = 'status_dep_id_id';
     	}
 
     	$filter['limit'] = $limit;
@@ -654,10 +665,10 @@ class erLhcoreClassChat {
 
     	$filter = array();
     	$filter['filter'] = array('status' => 2);
+        $filter['use_index'] = 'status';
 
     	if ($limitation !== true) {
     		$filter['customfilter'][] = $limitation;
-    		$filter['use_index'] = 'status_dep_id_id';
     	}
 
     	if (!empty($filterAdditional)) {
@@ -676,10 +687,10 @@ class erLhcoreClassChat {
 
     	$filter = array();
     	$filter['filter'] = array('status' => 4);
+        $filter['use_index'] = 'status';
 
     	if ($limitation !== true) {
     		$filter['customfilter'][] = $limitation;
-    		$filter['use_index'] = 'status_dep_id_id';
     	}
 
     	$filter['limit'] = $limit;
@@ -702,10 +713,10 @@ class erLhcoreClassChat {
 
     	$filter = array();
     	$filter['filter'] = array('status' => 4);
+        $filter['use_index'] = 'status';
 
     	if ($limitation !== true) {
     		$filter['customfilter'][] = $limitation;
-    		$filter['use_index'] = 'status_dep_id_id';
     	}
 
     	if (!empty($filterAdditional)) {
@@ -816,12 +827,13 @@ class erLhcoreClassChat {
 	       }
          
            if ($rowsNumber == 0){ // Perhaps auto active is turned on for some of departments
+
                $stmt = $db->prepare("SELECT lh_departament_custom_work_hours.start_hour, lh_departament_custom_work_hours.end_hour FROM lh_departament_custom_work_hours INNER JOIN lh_departament ON lh_departament.id = lh_departament_custom_work_hours.dep_id WHERE (lh_departament.pending_group_max = 0 || lh_departament.pending_group_max > lh_departament.pending_chats_counter) AND (lh_departament.pending_max = 0 || lh_departament.pending_max > lh_departament.pending_chats_counter) AND lh_departament.hidden = 0 AND lh_departament.disabled = 0 AND date_from <= :date_from AND date_to >= :date_to");
                $stmt->bindValue(':date_from',strtotime(date('Y-m-d')),PDO::PARAM_INT);
                $stmt->bindValue(':date_to',strtotime(date('Y-m-d')),PDO::PARAM_INT);
                $stmt->execute();
                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                 
+
                if(!empty($result)) {
                    foreach ($result as $item) {
                        if($item['start_hour'] <= (int)(date('G') . date('i')) && $item['end_hour'] > (int)(date('G') . date('i')))
@@ -1151,7 +1163,7 @@ class erLhcoreClassChat {
 
        $userData = $currentUser->getUserData(true);
 
-       if ( $userData->all_departments == 0 ) {
+       if ( $userData->all_departments == 0 && $chat->dep_id != 0) {
 
             /*
              * --From now permission is strictly by assigned department, not by chat owner
@@ -1300,9 +1312,9 @@ class erLhcoreClassChat {
    public static function updateDepartmentStats($dep) {
        $db = ezcDbInstance::get();
        $stmt = $db->prepare('UPDATE lh_departament SET active_chats_counter = :active_chats_counter, pending_chats_counter = :pending_chats_counter, closed_chats_counter = :closed_chats_counter WHERE id = :id');
-       $stmt->bindValue(':active_chats_counter',erLhcoreClassChat::getCount(array('filter' => array('dep_id' => $dep->id, 'status' => erLhcoreClassModelChat::STATUS_ACTIVE_CHAT))),PDO::PARAM_INT);
-       $stmt->bindValue(':pending_chats_counter',erLhcoreClassChat::getCount(array('filter' => array('dep_id' => $dep->id, 'status' => erLhcoreClassModelChat::STATUS_PENDING_CHAT))),PDO::PARAM_INT);
-       $stmt->bindValue(':closed_chats_counter',erLhcoreClassChat::getCount(array('filter' => array('dep_id' => $dep->id, 'status' => erLhcoreClassModelChat::STATUS_CLOSED_CHAT))),PDO::PARAM_INT);
+       $stmt->bindValue(':active_chats_counter',erLhcoreClassChat::getCount(array('use_index' => 'dep_id_status','filter' => array('dep_id' => $dep->id, 'status' => erLhcoreClassModelChat::STATUS_ACTIVE_CHAT))),PDO::PARAM_INT);
+       $stmt->bindValue(':pending_chats_counter',erLhcoreClassChat::getCount(array('use_index' => 'dep_id_status','filter' => array('dep_id' => $dep->id, 'status' => erLhcoreClassModelChat::STATUS_PENDING_CHAT))),PDO::PARAM_INT);
+       $stmt->bindValue(':closed_chats_counter',erLhcoreClassChat::getCount(array('use_index' => 'dep_id_status','filter' => array('dep_id' => $dep->id, 'status' => erLhcoreClassModelChat::STATUS_CLOSED_CHAT))),PDO::PARAM_INT);
        $stmt->bindValue(':id',$dep->id,PDO::PARAM_INT);
        $stmt->execute();
        
@@ -1395,7 +1407,45 @@ class erLhcoreClassChat {
    			foreach ($attrs as $attr) {
    				$object->{$attr};
    			};
-   			
+
+            if (isset($params['additional_columns']) && is_array($params['additional_columns']) && !empty($params['additional_columns'])) {
+                foreach ($params['additional_columns'] as $column) {
+                    if (strpos($column->variable,'additional_data.') !== false) {
+                        $additionalDataArray = $object->additional_data_array;
+                        if (is_array($additionalDataArray)) {
+                            foreach ($additionalDataArray as $additionalItem) {
+
+                                $valueCompare = false;
+
+                                if (isset($additionalItem['identifier'])) {
+                                    $valueCompare = $additionalItem['identifier'];
+                                } elseif (isset($additionalItem['key'])) {
+                                    $valueCompare = $additionalItem['key'];
+                                }
+
+                                if ($valueCompare !== false && $valueCompare == str_replace('additional_data.','',$column->variable)) {
+                                    $object->{'cc_'.$column->id} = $additionalItem['value'];
+                                    break;
+                                }
+                            }
+                        }
+                    } elseif (strpos($column->variable,'chat_variable.') !== false) {
+                        $additionalDataArray = $object->chat_variables_array;
+                        if (is_array($additionalDataArray)) {
+                            $variableName = str_replace('chat_variable.','', $column->variable);
+                            if (isset($object->chat_variables_array[$variableName]) && $object->chat_variables_array[$variableName] != '') {
+                                $object->{'cc_'.$column->id} = $object->chat_variables_array[$variableName];
+                            }
+                        }
+                    } elseif (strpos($column->variable,'lhc.') !== false) {
+                        $variableName = str_replace('lhc.','', $column->variable);
+                        if (isset($object->{$variableName}) && $object->{$variableName} != '') {
+                            $object->{'cc_'.$column->id} = $object->{$variableName};
+                        }
+                    }
+                }
+            }
+
    			foreach ($attrRemove as $attr) {
    				$object->{$attr} = null;
    			};
@@ -1407,7 +1457,9 @@ class erLhcoreClassChat {
    			        }
    			    }
    			}
-   			
+
+
+
    			if (!isset($params['do_not_clean'])){
    			    if (isset($params['filter_function'])){
                     $object = (object)array_filter((array)$object,function ($value) {
@@ -1416,9 +1468,7 @@ class erLhcoreClassChat {
                 } else {
                     $object = (object)array_filter((array)$object);
                 }
-
             }
-
    		}
    }
 
@@ -1442,6 +1492,12 @@ class erLhcoreClassChat {
    public static function validateFilterIn(& $params) {
    		foreach ($params as & $param) {
    			$param = (int)$param;
+   		}
+   }
+
+   public static function validateFilterInString(& $params) {
+   		foreach ($params as & $param) {
+   			$param =  preg_replace('/[^a-zA-Z0-9]/', '', $param );
    		}
    }
    
@@ -1830,12 +1886,48 @@ class erLhcoreClassChat {
 
        $ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
+       $activeChats = null;
+       $pendingChats = null;
+       $inactiveChats = null;
+
        if (!empty($ids)) {
-           $stmt = $db->prepare('UPDATE lh_userdep SET active_chats = :active_chats, pending_chats = :pending_chats, inactive_chats = :inactive_chats WHERE id IN (' . implode(',', $ids) . ');');
-           $stmt->bindValue(':active_chats',erLhcoreClassChat::getCount(array('filter' => array('user_id' => $user_id, 'status' => erLhcoreClassModelChat::STATUS_ACTIVE_CHAT))),PDO::PARAM_INT);
-           $stmt->bindValue(':pending_chats',erLhcoreClassChat::getCount(array('filter' => array('user_id' => $user_id, 'status' => erLhcoreClassModelChat::STATUS_PENDING_CHAT))),PDO::PARAM_INT);
-           $stmt->bindValue(':inactive_chats',erLhcoreClassChat::getCount(array('filterin' => array('status' => array(erLhcoreClassModelChat::STATUS_PENDING_CHAT, erLhcoreClassModelChat::STATUS_ACTIVE_CHAT),'status_sub' => array(erLhcoreClassModelChat::STATUS_SUB_USER_CLOSED_CHAT,erLhcoreClassModelChat::STATUS_SUB_SURVEY_SHOW)), 'filter' => array('user_id' => $user_id))),PDO::PARAM_INT);
-           $stmt->execute();
+
+           // Try 3 times to update table
+           for ($i = 0; $i < 3; $i++)
+           {
+               try {
+
+                   if ($activeChats === null){
+                       $activeChats = erLhcoreClassChat::getCount(array('filter' => array('user_id' => $user_id, 'status' => erLhcoreClassModelChat::STATUS_ACTIVE_CHAT)));
+                   }
+
+                   if ($pendingChats === null) {
+                       $pendingChats = erLhcoreClassChat::getCount(array('filter' => array('user_id' => $user_id, 'status' => erLhcoreClassModelChat::STATUS_PENDING_CHAT)));
+                   }
+
+                   if ($inactiveChats === null) {
+                       $inactiveChats = erLhcoreClassChat::getCount(array('filterin' => array('status' => array(erLhcoreClassModelChat::STATUS_PENDING_CHAT, erLhcoreClassModelChat::STATUS_ACTIVE_CHAT), 'status_sub' => array(erLhcoreClassModelChat::STATUS_SUB_USER_CLOSED_CHAT, erLhcoreClassModelChat::STATUS_SUB_SURVEY_SHOW)), 'filter' => array('user_id' => $user_id)));
+                   }
+
+                   $stmt = $db->prepare('UPDATE lh_userdep SET active_chats = :active_chats, pending_chats = :pending_chats, inactive_chats = :inactive_chats WHERE id IN (' . implode(',', $ids) . ');');
+                   $stmt->bindValue(':active_chats',(int)$activeChats,PDO::PARAM_INT);
+                   $stmt->bindValue(':pending_chats',(int)$pendingChats,PDO::PARAM_INT);
+                   $stmt->bindValue(':inactive_chats',(int)$inactiveChats,PDO::PARAM_INT);
+                   $stmt->execute();
+
+                   // Finish cycle
+                   break;
+
+               } catch (Exception $e) {
+                   if ($i == 2) { // It was last try
+                       erLhcoreClassLog::write($e->getMessage() . "\n" . $e->getTraceAsString());
+                       error_log($e->getMessage() . "\n" . $e->getTraceAsString());
+                   } else {
+                       // Just sleep for fraction of second and try again
+                       usleep(150);
+                   }
+               }
+           }
        }
    }
    
@@ -1917,8 +2009,18 @@ class erLhcoreClassChat {
        $recordIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
        if (!empty($recordIds)) {
-           $stmt = $db->prepare('SELECT 1 FROM lh_userdep WHERE id IN (' . implode(',', $recordIds) . ') ORDER BY id ASC FOR UPDATE;');
-           $stmt->execute();
+           try {
+               $stmt = $db->prepare('SELECT 1 FROM lh_userdep WHERE id IN (' . implode(',', $recordIds) . ') ORDER BY id ASC FOR UPDATE;');
+               $stmt->execute();
+           } catch (Exception $e) {
+               try {
+                   usleep(100);
+                   $stmt = $db->prepare('SELECT 1 FROM lh_userdep WHERE id IN (' . implode(',', $recordIds) . ') ORDER BY id ASC FOR UPDATE;');
+                   $stmt->execute();
+               } catch (Exception $e) {
+                   error_log($e->getMessage() . "\n" . $e->getTraceAsString());
+               }
+           }
        }
    }
 

@@ -3,6 +3,10 @@
 <?php echo erLhcoreClassAbstract::renderInput('name', $fields['name'], $object)?>
 </div>
 
+<div class="form-group">
+<label><?php echo erLhcoreClassAbstract::renderInput('disabled', $fields['disabled'], $object)?> <?php echo $fields['disabled']['trans'];?></label>
+</div>
+
 <div class="form-group">		
 <label><?php echo $fields['operator_name']['trans'];?></label>
 <?php echo erLhcoreClassAbstract::renderInput('operator_name', $fields['operator_name'], $object)?>
@@ -69,6 +73,11 @@
 </div>
 
 <div class="form-group">		
+<label><?php echo $fields['show_everytime']['trans'];?></label>
+<?php echo erLhcoreClassAbstract::renderInput('show_everytime', $fields['show_everytime'], $object)?>
+</div>
+
+<div class="form-group">
 <label><?php echo $fields['show_random_operator']['trans'];?></label>
 <?php echo erLhcoreClassAbstract::renderInput('show_random_operator', $fields['show_random_operator'], $object)?>
 </div>
@@ -93,13 +102,22 @@
 <?php echo erLhcoreClassAbstract::renderInput('dep_id', $fields['dep_id'], $object)?>
 </div>
 
+<div class="form-group">
+<label><?php echo $fields['campaign_id']['trans'];?></label>
+<?php echo erLhcoreClassAbstract::renderInput('campaign_id', $fields['campaign_id'], $object)?>
+</div>
+
 <div class="form-group">		
 <label><?php echo $fields['message']['trans'];?>*</label>
+<?php $bbcodeOptions = array('selector' => 'textarea[name=AbstractInput_message]'); ?>
+<?php include(erLhcoreClassDesign::designtpl('lhbbcode/toolbar.tpl.php')); ?>
 <?php echo erLhcoreClassAbstract::renderInput('message', $fields['message'], $object)?>
 </div>
 
 <div class="form-group">		
 <label><?php echo $fields['message_returning']['trans'];?></label>
+<?php $bbcodeOptions = array('selector' => 'textarea[name=AbstractInput_message_returning]'); ?>
+<?php include(erLhcoreClassDesign::designtpl('lhbbcode/toolbar.tpl.php')); ?>
 <?php echo erLhcoreClassAbstract::renderInput('message_returning', $fields['message_returning'], $object)?>
 </div>
 

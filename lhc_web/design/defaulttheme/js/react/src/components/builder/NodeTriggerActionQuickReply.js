@@ -17,6 +17,17 @@ class NodeTriggerActionQuickReply extends Component {
         this.deleteReply = this.deleteReply.bind(this);
         this.onPayloadTypeChange = this.onPayloadTypeChange.bind(this);
         this.onPayloadAttrChange = this.onPayloadAttrChange.bind(this);
+
+        this.onPrecheckChange = this.onPrecheckChange.bind(this);
+        this.onRenderArgsChange = this.onRenderArgsChange.bind(this);
+    }
+
+    onPrecheckChange(e) {
+        this.props.onPrecheckChange({id : this.props.id, value : e.target.value});
+    }
+
+    onRenderArgsChange(e) {
+        this.props.onRenderArgsChange({id : this.props.id, value : e.target.value});
     }
 
     onNameChange(e) {
@@ -45,16 +56,32 @@ class NodeTriggerActionQuickReply extends Component {
 
         return (
             <div className="row">
-                <div className="col-xs-5">
+                <div className="col-5">
                     <div className="form-group">
                         <label>Name</label>
-                        <input type="text" onChange={this.onNameChange} defaultValue={this.props.reply.getIn(['content','name'])} className="form-control input-sm" />
+                        <input type="text" onChange={this.onNameChange} defaultValue={this.props.reply.getIn(['content','name'])} className="form-control form-control-sm" />
                     </div>
+
+                    <div className="row">
+                        <div className="col-6">
+                            <div className="form-group">
+                                <label>Precheck event</label>
+                                <input type="text" onChange={this.onPrecheckChange} defaultValue={this.props.reply.getIn(['content','render_precheck_function'])} className="form-control form-control-sm" />
+                            </div>
+                        </div>
+                        <div className="col-6">
+                            <div className="form-group">
+                                <label>Arguments</label>
+                                <input type="text" onChange={this.onRenderArgsChange} defaultValue={this.props.reply.getIn(['content','render_args'])} className="form-control form-control-sm" />
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-                <div className="col-xs-5">
+                <div className="col-5">
                     <NodeTriggerActionQuickReplyPayload onPayloadAttrChange={this.onPayloadAttrChange} onPayloadTypeChange={this.onPayloadTypeChange} onPayloadChange={this.onPayloadChange} payloadType={this.props.reply.get('type')} currentPayload={this.props.reply.getIn(['content'])} />
                 </div>
-                <div className="col-xs-2">
+                <div className="col-2">
                     <div className="form-group">
                         <label>&nbsp;</label>
                         <div>

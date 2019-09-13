@@ -19,6 +19,11 @@ $def->properties['time_on_site']->columnName   = 'time_on_site';
 $def->properties['time_on_site']->propertyName = 'time_on_site';
 $def->properties['time_on_site']->propertyType = ezcPersistentObjectProperty::PHP_TYPE_STRING;
 
+$def->properties['inject_only_html'] = new ezcPersistentObjectProperty();
+$def->properties['inject_only_html']->columnName   = 'inject_only_html';
+$def->properties['inject_only_html']->propertyName = 'inject_only_html';
+$def->properties['inject_only_html']->propertyType = ezcPersistentObjectProperty::PHP_TYPE_INT;
+
 $def->properties['delay'] = new ezcPersistentObjectProperty();
 $def->properties['delay']->columnName   = 'delay';
 $def->properties['delay']->propertyName = 'delay';
@@ -181,6 +186,23 @@ $def->properties['bot_offline'] = new ezcPersistentObjectProperty();
 $def->properties['bot_offline']->columnName   = 'bot_offline';
 $def->properties['bot_offline']->propertyName = 'bot_offline';
 $def->properties['bot_offline']->propertyType = ezcPersistentObjectProperty::PHP_TYPE_INT;
+
+// Execute bot only if there is no online operators
+$def->properties['disabled'] = new ezcPersistentObjectProperty();
+$def->properties['disabled']->columnName   = 'disabled';
+$def->properties['disabled']->propertyName = 'disabled';
+$def->properties['disabled']->propertyType = ezcPersistentObjectProperty::PHP_TYPE_INT;
+
+// Campaign tracking
+$def->properties['campaign_id'] = new ezcPersistentObjectProperty();
+$def->properties['campaign_id']->columnName   = 'campaign_id';
+$def->properties['campaign_id']->propertyName = 'campaign_id';
+$def->properties['campaign_id']->propertyType = ezcPersistentObjectProperty::PHP_TYPE_INT;
+
+$def->properties['design_data'] = new ezcPersistentObjectProperty();
+$def->properties['design_data']->columnName   = 'design_data';
+$def->properties['design_data']->propertyName = 'design_data';
+$def->properties['design_data']->propertyType = ezcPersistentObjectProperty::PHP_TYPE_STRING;
 
 return $def;
 

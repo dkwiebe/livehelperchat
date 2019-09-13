@@ -191,7 +191,7 @@ class erLhcoreClassUser{
    		return $this->getCSFRToken() == $token;
    }
 
-   function setLoggedUser($user_id)
+   function setLoggedUser($user_id, $remember = false)
    {
 	   	if ($user_id != $this->userid) {
 
@@ -213,6 +213,7 @@ class erLhcoreClassUser{
    				if ( $data['disabled'][0] == 0 ) {
 
    					$this->AccessArray = false;
+                    $this->AccessTimestamp = false;
 
    					if ( isset($_SESSION['lhc_access_array']) ) {
    						unset($_SESSION['lhc_access_array']);
@@ -224,6 +225,10 @@ class erLhcoreClassUser{
 
    					$_SESSION['lhc_user_id'] = $data['id'][0];
    					$this->userid = $data['id'][0];
+
+   					if ($remember == true) {
+   					    $this->rememberMe();
+                    }
 
    					$this->authenticated = true;
    					
@@ -237,7 +242,7 @@ class erLhcoreClassUser{
    					    $stmt->bindValue(':id',$this->userid,PDO::PARAM_INT);
    					    $stmt->execute();
    					}
-   					
+
    					return true;
    				}
 

@@ -4,8 +4,8 @@
 
 	<!-- Nav tabs -->
 	<ul class="nav nav-tabs" role="tablist">
-		<li role="presentation" class="active"><a href="#general" aria-controls="general" role="tab" data-toggle="tab"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('system/htmlcode','General');?></a></li>
-		<li role="presentation"><a href="#design" aria-controls="design" role="tab" data-toggle="tab"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('system/htmlcode','Design');?></a></li>
+		<li role="presentation" class="nav-item"><a class="active nav-link" href="#general" aria-controls="general" role="tab" data-toggle="tab"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('system/htmlcode','General');?></a></li>
+		<li role="presentation" class="nav-item"><a class="nav-link" href="#design" aria-controls="design" role="tab" data-toggle="tab"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('system/htmlcode','Design');?></a></li>
 		<?php include(erLhcoreClassDesign::designtpl('lhsystem/embed_tab_multiinclude.tpl.php'));?>
 	</ul>
 
@@ -17,7 +17,7 @@
 					<label><input type="checkbox" id="id_hide_then_offline" value="on"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('system/htmlcode','Hide status when offline');?></label>
 				</div>
 				<div class="col-md-6">
-					<label><input type="checkbox" id="id_show_leave_form" value="on"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('system/htmlcode','Show a leave a message form when there are no online operators');?></label>
+					<label><input type="checkbox" id="id_show_leave_form" value="on"><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('system/htmlcode','Show a ‘leave a message form’ when there are no online operators');?></label>
 				</div>
 
 				<div class="col-md-6">
@@ -53,9 +53,7 @@
 					</div>
 				</div>
 
-				<div class="col-md-6">
-					<label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('system/htmlcode','Operator ID')?></label> <input type="text" id="id_operator" class="form-control" placeholder="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('system/htmlcode','To what operator chat should be assigned automatically?')?>" title="<?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('system/htmlcode','To what operator chat should be assigned automatically?')?>" value="" />
-				</div>
+                <?php include(erLhcoreClassDesign::designtpl('lhsystem/embed_tab_operator.tpl.php'));?>
 
 			</div>
 		</div>

@@ -35,9 +35,18 @@ $ViewList['adminthemes'] = array(
     'functions' => array( 'administratethemes' )
 );
 
+$ViewList['personaltheme'] = array(
+    'params' => array(),
+    'functions' => array( 'personaltheme' )
+);
+
 $ViewList['renderpreview'] = array(
     'params' => array('id'),
     'functions' => array( 'administratethemes' )
+);
+
+$ViewList['admincss'] = array(
+    'params' => array('id')
 );
 
 $ViewList['adminnewtheme'] = array(
@@ -66,5 +75,6 @@ $ViewList['gethash'] = array (
 );
 
 $FunctionList['administratethemes'] = array('explain' =>'Allow users to maintain themes');
+$FunctionList['personaltheme'] = array('explain' =>'Allow operators have their own personal back office theme');
 
 ?>

@@ -63,8 +63,8 @@ class erLhAbstractModelAutoResponder {
 			'repeat_number'		=> $this->repeat_number,
 			'survey_timeout'	=> $this->survey_timeout,
 			'survey_id'		    => $this->survey_id,
-
-            'languages' => $this->languages,
+            'languages'         => $this->languages,
+            'bot_configuration' => $this->bot_configuration,
 		);
 
 		return $stateArray;
@@ -111,7 +111,22 @@ class erLhAbstractModelAutoResponder {
 	   	       }
 	   		   return $this->dep;
 	   		break;
-	   		
+
+        case 'bot_configuration_array':
+           $attr = str_replace('_array','',$var);
+           if (!empty($this->{$attr})) {
+               $jsonData = json_decode($this->{$attr},true);
+               if ($jsonData !== null) {
+                   $this->{$var} = $jsonData;
+               } else {
+                   $this->{$var} = array();
+               }
+           } else {
+               $this->{$var} = array();
+           }
+           return $this->{$var};
+           break;
+
 	   	case 'dep_frontend':
 	   	       $this->dep_frontend = $this->dep === false ? '-' : (string)$this->dep;
 	   		   return $this->dep_frontend;
@@ -135,6 +150,11 @@ class erLhAbstractModelAutoResponder {
 	   }
 	}
 
+    public function beforeUpdate()
+    {
+        $this->bot_configuration = json_encode($this->bot_configuration_array);
+    }
+
 	public static function processAutoResponder(erLhcoreClassModelChat $chat) {
 
 		$session = erLhcoreClassAbstract::getSession();
@@ -154,11 +174,69 @@ class erLhAbstractModelAutoResponder {
 		return false;
 	}
 
+	public function getMeta(& $chat, $type)
+    {
+        if (isset($this->bot_configuration_array[$type . '_bot_id']) && $this->bot_configuration_array[$type . '_bot_id'] > 0 &&
+            isset($this->bot_configuration_array[$type . '_trigger_id']) && $this->bot_configuration_array[$type . '_trigger_id'] > 0) {
+
+            $trigger = erLhcoreClassModelGenericBotTrigger::fetch($this->bot_configuration_array[$type . '_trigger_id']);
+
+            if ($trigger instanceof erLhcoreClassModelGenericBotTrigger) {
+                $message = erLhcoreClassGenericBotWorkflow::processTrigger($chat, $trigger,false, array('args' => array('do_not_save' => true)));
+
+                // Set chat bot
+                $variablesArray = $chat->chat_variables_array;
+
+                if (!isset($variablesArray['gbot_id'])){
+                    $variablesArray['gbot_id'] = $trigger->bot_id;
+                    $chat->chat_variables = json_encode($variablesArray);
+                    $chat->chat_variables_array = $variablesArray;
+                }
+
+                return $message->meta_msg;
+            }
+        }
+
+        return '';
+    }
+
 	public function dependFooterJs()
     {
         return '<script type="text/javascript" src="'.erLhcoreClassDesign::designJS('js/angular.lhc.autoresponder.js').'"></script>';
     }
 
+    public function setTranslationData($data)
+    {
+        if (isset($data['timeout_message']) && $data['timeout_message'] != '') {
+            $this->timeout_message = $data['timeout_message'];
+        }
+
+        if (isset($data['wait_timeout_hold']) && $data['wait_timeout_hold'] != '') {
+            $this->wait_timeout_hold = $data['wait_timeout_hold'];
+        }
+
+        if (isset($data['wait_message']) && $data['wait_message'] != '') {
+            $this->wait_message = $data['wait_message'];
+        }
+
+        if (isset($data['operator']) && $data['operator'] != '') {
+            $this->operator = $data['operator'];
+        }
+
+        for ($i = 1; $i <= 5; $i++) {
+            if (isset($data['timeout_message_' . $i]) && $data['timeout_message_' . $i] != '') {
+                $this->{'timeout_message_' . $i} = $data['timeout_message_' . $i];
+            }
+
+            if (isset($data['timeout_reply_message_' . $i]) && $data['timeout_reply_message_' . $i] != '') {
+                $this->{'timeout_reply_message_' . $i} = $data['timeout_reply_message_' . $i];
+            }
+
+            if (isset($data['timeout_hold_message_' . $i]) && $data['timeout_hold_message_' . $i] != '') {
+                $this->{'timeout_hold_message_' . $i} = $data['timeout_hold_message_' . $i];
+            }
+        }
+    }
     /**
      * @desc translate auto responder if translation by chat exists
      *
@@ -169,39 +247,20 @@ class erLhAbstractModelAutoResponder {
             $languages = json_decode($this->languages, true);
 
             if (is_array($languages)) {
+
+                // Try to find exact match
                 foreach ($languages as $data) {
                     if (in_array($locale, $data['languages'])) {
+                        $this->setTranslationData($data);
+                        return ;
+                    }
+                }
 
-                        if (isset($data['timeout_message']) && $data['timeout_message'] != '') {
-                            $this->timeout_message = $data['timeout_message'];
-                        }
-
-                        if (isset($data['wait_timeout_hold']) && $data['wait_timeout_hold'] != '') {
-                            $this->wait_timeout_hold = $data['wait_timeout_hold'];
-                        }
-
-                        if (isset($data['wait_message']) && $data['wait_message'] != '') {
-                            $this->wait_message = $data['wait_message'];
-                        }
-
-                        if (isset($data['operator']) && $data['operator'] != '') {
-                            $this->operator = $data['operator'];
-                        }
-
-                        for ($i = 1; $i <= 5; $i++) {
-                            if (isset($data['timeout_message_' . $i]) && $data['timeout_message_' . $i] != '') {
-                                $this->{'timeout_message_' . $i} = $data['timeout_message_' . $i];
-                            }
-
-                            if (isset($data['timeout_reply_message_' . $i]) && $data['timeout_reply_message_' . $i] != '') {
-                                $this->{'timeout_reply_message_' . $i} = $data['timeout_reply_message_' . $i];
-                            }
-
-                            if (isset($data['timeout_hold_message_' . $i]) && $data['timeout_hold_message_' . $i] != '') {
-                                $this->{'timeout_hold_message_' . $i} = $data['timeout_hold_message_' . $i];
-                            }
-                        }
-
+                // Try to match general match by first two letters
+                $localeShort = explode('-',$locale)[0];
+                foreach ($languages as $data) {
+                    if (in_array($localeShort, $data['languages'])) {
+                        $this->setTranslationData($data);
                         return ;
                     }
                 }
@@ -306,11 +365,6 @@ class erLhAbstractModelAutoResponder {
 	public $wait_timeout_hold_4 = 0;
 	public $wait_timeout_hold_5 = 0;
 
-	// Not replying attributes
-	/* const CHAT_NOT_CLOSED = 0;
-	const EXPLICITLY_NOT_CLOSED = 1;
-	public $required_chat_status = self::CHAT_NOT_CLOSED; */
-	
 	// 1 Message
 	public $wait_timeout_reply_1 = 0;
 	public $timeout_reply_message_1 = '';
@@ -335,6 +389,8 @@ class erLhAbstractModelAutoResponder {
 	public $wait_timeout_hold = '';
 
 	public $languages = '';
+
+	public $bot_configuration = '';
 
 	// Auto responder name
 	public $name = '';

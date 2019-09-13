@@ -18,7 +18,7 @@
   "basePath": "/",
   "tags": [
     {
-      "name": "api",
+      "name": "chat",
       "description": "API Related to chats"
     },
     {
@@ -28,6 +28,10 @@
     {
       "name": "online",
       "description": "API Related to online status"
+    },
+    {
+      "name": "online_user",
+      "description": "API Related to online users"
     }
   ],
   "schemes": [
@@ -38,7 +42,7 @@
     "/restapi/chats": {
       "get": {
         "tags": [
-          "api"
+          "chat"
         ],
         "summary": "Fetch chats list",
         "description": "",
@@ -79,6 +83,14 @@
             "format": "int32"
           },
           {
+            "name": "delay",
+            "in": "query",
+            "description": "How many seconds has to be passed from chat start. It's usefull if you want to fetch chats older than n seconds. It's time in seconds from chat start.",
+            "required": false,
+            "type": "string",
+            "format": "int32"
+          },
+          {
             "name": "offset",
             "in": "query",
             "description": "Offset",
@@ -114,10 +126,195 @@
         ]
       }
     },
+    "/restapi/campaignsconversions": {
+      "get": {
+        "tags": [
+          "online_user"
+        ],
+        "summary": "Search for campaign conversions",
+        "description": "",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "department_id",
+            "in": "query",
+            "description": "Department ID",
+            "required": false,
+            "type": "string",
+            "format": "int32"
+          },
+          {
+            "name": "campaign_id",
+            "in": "query",
+            "description": "Campaign id",
+            "required": false,
+            "type": "string",
+            "format": "int32"
+          },
+          {
+            "name": "invitation_id",
+            "in": "query",
+            "description": "Invitation id",
+            "required": false,
+            "type": "string",
+            "format": "int32"
+          },
+          {
+            "name": "chat_id",
+            "in": "query",
+            "description": "Chat id",
+            "required": false,
+            "type": "string",
+            "format": "int32"
+          },
+          {
+            "name": "ctime",
+            "in": "query",
+            "description": "Create time greater than. Unix timestamp",
+            "required": false,
+            "type": "string",
+            "format": "int32"
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id greater than",
+            "required": false,
+            "type": "string",
+            "format": "int32"
+          },
+          {
+            "name": "con_time",
+            "in": "query",
+            "description": "Conversion time greater than. Unix timestamp",
+            "required": false,
+            "type": "string",
+            "format": "int32"
+          },
+          {
+            "name": "invitation_status",
+            "in": "query",
+            "description": "Invitation status.",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "send",
+                "shown",
+                "seen",
+                "chat_started"
+              ]
+            }
+          },
+
+          {
+            "name": "invitation_type",
+            "in": "query",
+            "description": "Invitation type",
+            "required": false,
+            "type": "string",
+            "format": "int32",
+            "enum": [
+              "operator",
+              "system"
+            ]
+          },
+          {
+            "name": "device_type",
+            "in": "query",
+            "description": "Device type",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "pc",
+                "mobile",
+                "tablet"
+              ]
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Limit",
+            "required": false,
+            "type": "string",
+            "format": "int32",
+            "default": "20"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Offset",
+            "required": false,
+            "type": "string",
+            "format": "int32",
+            "default": "0"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "sort order for id",
+            "required": false,
+            "default": "asc",
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ]
+          },
+          {
+            "name": "include_onlinevisitor",
+            "description": "Include online visitor record data",
+            "required": false,
+            "type": "boolean",
+            "default": false,
+            "in": "query"
+          },
+          {
+            "name": "include_invitation",
+            "description": "Include invitation object",
+            "required": false,
+            "type": "boolean",
+            "default": false,
+            "in": "query"
+          },
+          {
+            "name": "include_department",
+            "description": "Include department object",
+            "required": false,
+            "type": "boolean",
+            "default": false,
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search for campaign conversions",
+            "schema": {
+            }
+          },
+          "400": {
+            "description": "Error",
+            "schema": {
+            }
+          }
+        },
+        "security": [
+          {
+            "login": []
+          }
+        ]
+      }
+    },
     "/restapi/fetchchat": {
       "get": {
         "tags": [
-          "api"
+          "chat"
         ],
         "summary": "Fetch chat information",
         "description": "",
@@ -164,7 +361,7 @@
     "/restapi/fetchchatmessages": {
       "get": {
         "tags": [
-          "api"
+          "chat"
         ],
         "summary": "Fetch chat messages",
         "description": "",
@@ -227,7 +424,7 @@
     "/restapi/updatechatattributes": {
       "post": {
         "tags": [
-          "api"
+          "chat"
         ],
         "summary": "Updates chat attributes",
         "description": "Updates chat attributes.",
@@ -279,7 +476,7 @@
     "/restapi/addmsguser": {
       "post": {
         "tags": [
-          "api"
+          "chat"
         ],
         "summary": "Add message to chat as a user",
         "description": "",
@@ -321,6 +518,122 @@
             }
           }
         }
+      }
+    },
+    "/restapi/addmsgadmin": {
+      "post": {
+        "tags": [
+          "chat"
+        ],
+        "summary": "Add message to chat as an admin",
+        "description": "",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "chat_id",
+            "in": "formData",
+            "description": "Chat ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "msg",
+            "in": "formData",
+            "description": "Message",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "sender",
+            "in": "formData",
+            "description": "Sender - operator or bot is sending a message. On it depends how Live Helper Chat will change chat statuses.",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "operator",
+              "bot"
+            ]
+          },
+          {
+            "name": "meta_msg",
+            "in": "formData",
+            "description": "Meta body for a message",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "operator_name",
+            "in": "formData",
+            "description": "Set custom operator name for a message",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Message added",
+            "schema": {
+            }
+          },
+          "400": {
+            "description": "Error",
+            "schema": {
+            }
+          }
+        },
+        "security": [
+          {
+            "login": []
+          }
+        ]
+      }
+    },
+    "/restapi/setchatstatus": {
+      "post": {
+        "tags": [
+          "chat"
+        ],
+        "summary": "Set chat status",
+        "description": "Changes chat status to provided one. Related logic is also executed in the background.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "chat_id",
+            "in": "formData",
+            "description": "Chat ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "in": "formData",
+            "description": "0 - pending, 1 - active, 2 - closed chat, chat box chat - 3, operators chat - 4, bot chat - 5",
+            "required": true,
+            "type": "string",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chat status was changed",
+            "schema": {
+            }
+          },
+          "400": {
+            "description": "Error",
+            "schema": {
+            }
+          }
+        },
+        "security": [
+          {
+            "login": []
+          }
+        ]
       }
     },
     "/restapi/getuser": {
@@ -428,6 +741,13 @@
           "application/json"
         ],
         "parameters": [
+          {
+            "name": "ignore_user_status",
+            "in": "query",
+            "description": "Ignore user status",
+            "required": false,
+            "type": "boolean"
+          }
         ],
         "responses": {
           "200": {
@@ -463,9 +783,23 @@
             "name": "department_id",
             "in": "path",
             "description": "Department ID",
-            "required": false,
+            "required": true,
             "type": "string",
             "format": "int32"
+          },
+          {
+            "name": "ignore_user_status",
+            "in": "query",
+            "description": "Ignore user status",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "exclude_bot",
+            "in": "query",
+            "description": "Exclude bot status",
+            "required": false,
+            "type": "boolean"
           }
         ],
         "responses": {
@@ -505,6 +839,59 @@
             "required": false,
             "type": "string",
             "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+            }
+          },
+          "400": {
+            "description": "Error",
+            "schema": {
+            }
+          }
+        },
+        "security": [
+          {
+            "login": []
+          }
+        ]
+      }
+    },
+    "/restapi/isonlinechat/{chat_id}": {
+      "get": {
+        "tags": [
+          "online"
+        ],
+        "summary": "Check is user anyone from operators online for provided chat",
+        "description": "Returns status for particular user",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "chat_id",
+            "in": "path",
+            "description": "Chat ID",
+            "required": false,
+            "type": "string",
+            "format": "int32"
+          },
+          {
+            "name": "ignore_user_status",
+            "in": "query",
+            "description": "Ignore user status",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "exclude_bot",
+            "in": "query",
+            "description": "Exclude bot status",
+            "required": false,
+            "type": "boolean"
           }
         ],
         "responses": {

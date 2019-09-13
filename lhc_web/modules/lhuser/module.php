@@ -23,6 +23,17 @@ $ViewList['logout'] = array(
     'params' => array()
 );
 
+$ViewList['loginas'] = array(
+    'params' => array('id'),
+    'functions' => array( 'loginas' )
+);
+
+$ViewList['loginasuser'] = array(
+    'params' => array('id'),
+    'uparams' => array('hash', 'ts'),
+    'functions' => array(  )
+);
+
 $ViewList['account'] = array(
     'params' => array(),
     'uparams' => array('msg','action','csfr','tab'),
@@ -111,25 +122,37 @@ $ViewList['setoffline'] = array (
 		'params' => array('status')
 );
 
-$ViewList['setinvisible'] = array (
-		'functions' => array( 'changevisibility' ),
-		'params' => array('status')
-);
-
 $ViewList['setinactive'] = array (
-		'functions' => array( 'changevisibility' ),
-		'params' => array('status')
+    'functions' => array( 'changeonlinestatus' ),
+    'params' => array('status')
 );
 
 $ViewList['wentinactive'] = array (
+    'functions' => array( 'changeonlinestatus' ),
+    'params' => array()
+);
+
+$ViewList['setinvisible'] = array (
 		'functions' => array( 'changevisibility' ),
-		'params' => array()
+		'params' => array('status')
 );
 
 $ViewList['autologinconfig'] = array(
     'params' => array(),
     'uparams' => array('csfr'),
     'functions' => array( 'userautologin' )
+);
+
+$ViewList['passwordrequirements'] = array(
+    'params' => array(),
+    'uparams' => array('csfr'),
+    'functions' => array( 'pswdsecurity' )
+);
+
+$ViewList['updatepassword'] = array(
+    'params' => array('user_id','ts','hash'),
+    'uparams' => array('csfr'),
+    'functions' => array( )
 );
 
 $FunctionList['groupassignuser'] = array('explain' => 'Allow user to assign user to group');
@@ -158,5 +181,7 @@ $FunctionList['userautologin'] = array('explain' => 'Allow user to configure aut
 $FunctionList['canseedepartmentstats'] = array('explain' => 'Allow user to see departments statistic');
 $FunctionList['canseealldepartmentstats'] = array('explain' => 'Allow user to see all departments statistic, not only from his departments');
 $FunctionList['import'] = array('explain' => 'Allow user to import users');
+$FunctionList['loginas'] = array('explain' => 'Allow user to login as other user');
+$FunctionList['passwordsecurity'] = array('explain' => 'Allow user to set password security requirements');
 
 ?>

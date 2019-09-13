@@ -136,14 +136,32 @@ class erLhcoreClassDepartament{
 	   			'products_required' => new ezcInputFormDefinitionElement(
 	   					ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
 	   			),
+                'assign_same_language' => new ezcInputFormDefinitionElement(
+	   					ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
+	   			),
+                'hide_send_email' => new ezcInputFormDefinitionElement(
+	   					ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
+	   			),
                 // Bot attributes
                 'bot_id' => new ezcInputFormDefinitionElement(
                         ezcInputFormDefinitionElement::OPTIONAL, 'int', array('min_range' => 1)
                 ),
+                'bot_tr_id' => new ezcInputFormDefinitionElement(
+                        ezcInputFormDefinitionElement::OPTIONAL, 'int', array('min_range' => 1)
+                ),
                 'bot_only_offline' => new ezcInputFormDefinitionElement(
                         ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
+                ),
+                'auto_delay_timeout' => new ezcInputFormDefinitionElement(
+                        ezcInputFormDefinitionElement::OPTIONAL, 'int', array('min_range' => 1)
+                ),
+                'auto_delay_var' => new ezcInputFormDefinitionElement(
+                        ezcInputFormDefinitionElement::OPTIONAL, 'unsafe_raw'
+                ),
+                'survey_id' => new ezcInputFormDefinitionElement(
+                    ezcInputFormDefinitionElement::OPTIONAL, 'int', array('min_range' => 1)
                 )
-	   	);
+        );
 
         foreach (self::getWeekDays() as $dayShort => $dayLong) {
             $definition[$dayShort] = new ezcInputFormDefinitionElement(
@@ -187,6 +205,12 @@ class erLhcoreClassDepartament{
 		   		$department->active_balancing = 1;
 		   	} else {
 		   		$department->active_balancing = 0;
+		   	}
+
+		   	if ( $form->hasValidData( 'assign_same_language' ) && $form->assign_same_language == true )	{
+		   		$department->assign_same_language = 1;
+		   	} else {
+		   		$department->assign_same_language = 0;
 		   	}
 		   	
 		   	if ( $form->hasValidData( 'MaxNumberActiveChats' ) )	{
@@ -317,7 +341,7 @@ class erLhcoreClassDepartament{
 	   	} else {
 	   		$department->inform_close_all = 0;
 	   	}
-	   		   	
+
 	   	if ( $form->hasValidData( 'inform_close_all_email' ) ) {
 	   		$department->inform_close_all_email = $form->inform_close_all_email;
 	   	} else {
@@ -455,10 +479,42 @@ class erLhcoreClassDepartament{
            $botConfiguration['bot_id'] = 0;
        }
 
+
+       if ( $form->hasValidData( 'bot_tr_id' ) )
+       {
+           $botConfiguration['bot_tr_id'] = $form->bot_tr_id;
+       }
+
+       if (erLhcoreClassUser::instance()->hasAccessTo('lhdepartment', 'managesurvey')) {
+           if ($form->hasValidData('survey_id')) {
+               $botConfiguration['survey_id'] = $form->survey_id;
+           } else {
+               $botConfiguration['survey_id'] = 0;
+           }
+       }
+
        if ( $form->hasValidData( 'bot_only_offline' ) ) {
            $botConfiguration['bot_only_offline'] = true;
        } else {
            $botConfiguration['bot_only_offline'] = false;
+       }
+
+       if ( $form->hasValidData( 'auto_delay_timeout' ) ) {
+           $botConfiguration['auto_delay_timeout'] = $form->auto_delay_timeout;
+       } else {
+           $botConfiguration['auto_delay_timeout'] = 0;
+       }
+
+       if ( $form->hasValidData( 'auto_delay_var' ) ) {
+           $botConfiguration['auto_delay_var'] = $form->auto_delay_var;
+       } else {
+           $botConfiguration['auto_delay_var'] = '';
+       }
+
+       if ( $form->hasValidData( 'hide_send_email' ) && $form->hide_send_email === true ) {
+           $botConfiguration['hide_send_email'] = true;
+       } else {
+           $botConfiguration['hide_send_email'] = false;
        }
 
        $department->bot_configuration_array = $botConfiguration;

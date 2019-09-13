@@ -56,13 +56,19 @@ $ViewList['uploadfileadminonlineuser'] = array(
 
 $ViewList['new'] = array(
 		'params' => array(),
-		'uparams' => array('mode'),
-		'functions' => array( 'use_operator' )
+		'uparams' => array('mode','persistent'),
+		'functions' => array( 'upload_new_file' )
 );
 
 $ViewList['attatchfile'] = array(
 		'params' => array('chat_id'),
 		'uparams' => array('user_id'),
+		'functions' => array( 'use_operator' )
+);
+
+$ViewList['attatchfileimg'] = array(
+		'params' => array(),
+		'uparams' => array(),
 		'functions' => array( 'use_operator' )
 );
 
@@ -102,7 +108,8 @@ $ViewList['storescreenshot'] = array(
 );
 
 $FunctionList['use'] = array('explain' => 'Allow user to configure files upload');
-$FunctionList['use_operator'] = array('explain' => 'Allow operators to upload files');
+$FunctionList['use_operator'] = array('explain' => 'Allow operators to send files to visitor');
+$FunctionList['upload_new_file'] = array('explain' => 'Allow operator to upload new file');
 $FunctionList['file_list'] = array('explain' => 'Allow operators to list all uploaded files');
 $FunctionList['file_delete'] = array('explain' => 'Allow operators to delete all files');
 $FunctionList['file_delete_chat'] = array('explain' => 'Allow operators to delete his chat files');

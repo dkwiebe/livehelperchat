@@ -262,8 +262,20 @@ $fields = array(
                 'custom_html' => array(
    						'type' => 'textarea',
    						'height' => '50px',
+                        'ace_editor' => 'html',
                         'main_attr' => 'bot_configuration_array',
    						'trans' => erTranslationClassLhTranslation::getInstance()->getTranslation('abstract/widgettheme','Custom html before start chat form fields, popup'),
+   						'required' => false,
+   						'hidden' => true,
+   						'validation_definition' => new ezcInputFormDefinitionElement(
+   								ezcInputFormDefinitionElement::OPTIONAL, 'unsafe_raw'
+   						)),
+                    'inject_html' => array(
+   						'type' => 'textarea',
+   						'height' => '50px',
+                        'ace_editor' => 'html',
+                        'main_attr' => 'bot_configuration_array',
+   						'trans' => erTranslationClassLhTranslation::getInstance()->getTranslation('abstract/widgettheme','Inject HTML on widget open'),
    						'required' => false,
    						'hidden' => true,
    						'validation_definition' => new ezcInputFormDefinitionElement(
@@ -272,6 +284,7 @@ $fields = array(
                 'custom_html_widget' => array(
    						'type' => 'textarea',
    						'height' => '50px',
+                        'ace_editor' => 'html',
                         'main_attr' => 'bot_configuration_array',
    						'trans' => erTranslationClassLhTranslation::getInstance()->getTranslation('abstract/widgettheme','Custom html before start chat form fields, widget'),
    						'required' => false,
@@ -282,6 +295,7 @@ $fields = array(
                 'custom_html_bot' => array(
    						'type' => 'textarea',
    						'height' => '50px',
+                        'ace_editor' => 'html',
                         'main_attr' => 'bot_configuration_array',
    						'trans' => erTranslationClassLhTranslation::getInstance()->getTranslation('abstract/widgettheme','Custom html before start chat form fields, popup (bot mode)'),
    						'required' => false,
@@ -292,8 +306,42 @@ $fields = array(
                 'custom_html_widget_bot' => array(
    						'type' => 'textarea',
    						'height' => '50px',
+                        'ace_editor' => 'html',
                         'main_attr' => 'bot_configuration_array',
    						'trans' => erTranslationClassLhTranslation::getInstance()->getTranslation('abstract/widgettheme','Custom html before start chat form fields, widget (bot mode)'),
+   						'required' => false,
+   						'hidden' => true,
+   						'validation_definition' => new ezcInputFormDefinitionElement(
+   								ezcInputFormDefinitionElement::OPTIONAL, 'unsafe_raw'
+   						)),
+                'custom_html_header' => array(
+   						'type' => 'textarea',
+   						'height' => '50px',
+                        'ace_editor' => 'html',
+                        'main_attr' => 'bot_configuration_array',
+   						'trans' => erTranslationClassLhTranslation::getInstance()->getTranslation('abstract/widgettheme','Custom html before standard widget header'),
+   						'required' => false,
+   						'hidden' => true,
+   						'validation_definition' => new ezcInputFormDefinitionElement(
+   								ezcInputFormDefinitionElement::OPTIONAL, 'unsafe_raw'
+   						)),
+                'custom_html_header_body' => array(
+   						'type' => 'textarea',
+   						'height' => '50px',
+                        'ace_editor' => 'html',
+                        'main_attr' => 'bot_configuration_array',
+   						'trans' => erTranslationClassLhTranslation::getInstance()->getTranslation('abstract/widgettheme','Custom html inside standard widget header'),
+   						'required' => false,
+   						'hidden' => true,
+   						'validation_definition' => new ezcInputFormDefinitionElement(
+   								ezcInputFormDefinitionElement::OPTIONAL, 'unsafe_raw'
+   						)),
+                'custom_html_status' => array(
+   						'type' => 'textarea',
+   						'height' => '50px',
+                        'ace_editor' => 'html',
+                        'main_attr' => 'bot_configuration_array',
+   						'trans' => erTranslationClassLhTranslation::getInstance()->getTranslation('abstract/widgettheme','Custom html before standard widget status header'),
    						'required' => false,
    						'hidden' => true,
    						'validation_definition' => new ezcInputFormDefinitionElement(
@@ -360,6 +408,20 @@ $fields = array(
        				    'backend_call_param' => 'online_image',
        				    'delete_call' => 'deletePhoto',
        				    'delete_call_param' => 'online_image',   				    
+   						'validation_definition' => new ezcInputFormDefinitionElement(
+   								ezcInputFormDefinitionElement::OPTIONAL, 'callback','erLhcoreClassSearchHandler::isImageFile()'
+   						)),
+                'notification_icon' => array(
+   						'type' => 'file',
+   						'trans' => erTranslationClassLhTranslation::getInstance()->getTranslation('abstract/widgettheme','Notification icon'),
+   						'required' => false,
+   						'hidden' => true,
+                        'main_attr' => 'notification_configuration_array',
+   						'frontend' => 'notification_icon_url_img',
+       				    'backend_call' => 'movePhoto',
+       				    'backend_call_param' => 'notification_icon',
+       				    'delete_call' => 'deletePhoto',
+       				    'delete_call_param' => 'notification_icon',
    						'validation_definition' => new ezcInputFormDefinitionElement(
    								ezcInputFormDefinitionElement::OPTIONAL, 'callback','erLhcoreClassSearchHandler::isImageFile()'
    						)),
@@ -436,13 +498,22 @@ $fields = array(
    						)),    
    				'pending_join' => array(
    						'type' => 'text',
-   						'trans' => erTranslationClassLhTranslation::getInstance()->getTranslation('abstract/widgettheme','Text when user starts a chat and is waiting for operator to join a chat'),
+   						'trans' => erTranslationClassLhTranslation::getInstance()->getTranslation('abstract/widgettheme','Text when user starts a chat and is waiting for operator to join a chat. Only if queue is 1'),
    				        'placeholder' => erTranslationClassLhTranslation::getInstance()->getTranslation('chat/checkchatstatus','Pending a support staff member to join, you can write your questions, and as soon as a support staff member confirms this chat, they will get your messages'),
    						'required' => false,
    						'hidden' => true,
    						'validation_definition' => new ezcInputFormDefinitionElement(
    								ezcInputFormDefinitionElement::OPTIONAL, 'unsafe_raw'
-   						)),    
+   						)),
+                'pending_join_queue' => array(
+   						'type' => 'text',
+   						'trans' => erTranslationClassLhTranslation::getInstance()->getTranslation('abstract/widgettheme','Text when user starts a chat and is waiting for operator to join a chat. Only if queue is >= 1'),
+   				        'placeholder' => erTranslationClassLhTranslation::getInstance()->getTranslation('chat/checkchatstatus','You are number {number} in the queue. Please wait...'),
+   						'required' => false,
+   						'hidden' => true,
+   						'validation_definition' => new ezcInputFormDefinitionElement(
+   								ezcInputFormDefinitionElement::OPTIONAL, 'unsafe_raw'
+   						)),
    				'noonline_operators' => array(
    						'type' => 'text',
    						'trans' => erTranslationClassLhTranslation::getInstance()->getTranslation('abstract/widgettheme','Text when user starts a chat but department is offline'),
@@ -500,6 +571,7 @@ $fields = array(
    						)),
    				'custom_status_css' => array(
    						'type' => 'textarea',
+   						'ace_editor' => 'css',
    						'trans' => erTranslationClassLhTranslation::getInstance()->getTranslation('abstract/widgettheme','Status widget additional CSS, takes effect after save'),
    						'required' => true,
    						'placeholder' => '#lhc_status_container:hover{}',
@@ -510,6 +582,7 @@ $fields = array(
    						)),
    				'custom_popup_css' => array(
    						'type' => 'textarea',
+                        'ace_editor' => 'css',
    						'trans' => erTranslationClassLhTranslation::getInstance()->getTranslation('abstract/widgettheme','Background color for popup'),
    						'required' => true,
    						'placeholder' => 'body(background-color:red)',
@@ -520,6 +593,7 @@ $fields = array(
    						)),
    				'custom_container_css' => array(
    						'type' 			=> 'textarea',
+                        'ace_editor'    => 'css',
    						'trans' 		=> erTranslationClassLhTranslation::getInstance()->getTranslation('abstract/widgettheme','Widget container additional CSS, takes effect after save'),
    						'required' 		=> true,
    						'hidden' 		=> true,
@@ -530,6 +604,7 @@ $fields = array(
    						)),
    				'custom_widget_css' => array(
    						'type' 			=> 'textarea',
+                        'ace_editor'    => 'css',
    						'trans' 		=> erTranslationClassLhTranslation::getInstance()->getTranslation('abstract/widgettheme','Widget body additional CSS, takes effect after save'),
    						'required' 		=> true,
    						'placeholder' 	=> 'body {background-color:#84A52E;}',
@@ -744,7 +819,47 @@ $fields = array(
                     'validation_definition' => new ezcInputFormDefinitionElement(
                         ezcInputFormDefinitionElement::OPTIONAL, 'unsafe_raw'
                 )),
-
+                'placeholder_message' => array(
+                    'type' => 'text',
+                    'main_attr' => 'bot_configuration_array',
+                    'trans' => erTranslationClassLhTranslation::getInstance()->getTranslation('abstract/widgettheme','Placeholder for message text'),
+                    'placeholder' => erTranslationClassLhTranslation::getInstance()->getTranslation('chat/checkchatstatus','Type your message here and hit enter to send...'),
+                    'required' => false,
+                    'hidden' => true,
+                    'nginit' => true,
+                    'validation_definition' => new ezcInputFormDefinitionElement(
+                        ezcInputFormDefinitionElement::OPTIONAL, 'unsafe_raw'
+                )),
+                'disable_edit_prev' => array(
+                    'type' => 'checkbox',
+                    'main_attr' => 'bot_configuration_array',
+                    'trans' => erTranslationClassLhTranslation::getInstance()->getTranslation('abstract/widgettheme','Do not allow visitor to edit previous message by pressing up arrow'),
+                    'required' => false,
+                    'hidden' => true,
+                    'nginit' => true,
+                    'validation_definition' => new ezcInputFormDefinitionElement(
+                        ezcInputFormDefinitionElement::OPTIONAL, 'unsafe_raw'
+                )),
+                'notification_enabled' => array(
+                    'type' => 'checkbox',
+                    'main_attr' => 'notification_configuration_array',
+                    'trans' => erTranslationClassLhTranslation::getInstance()->getTranslation('abstract/widgettheme','Notifications enabled'),
+                    'required' => false,
+                    'hidden' => true,
+                    'nginit' => true,
+                    'validation_definition' => new ezcInputFormDefinitionElement(
+                        ezcInputFormDefinitionElement::OPTIONAL, 'boolean'
+                )),
+                'ntitle' => array(
+                    'type' => 'text',
+                    'main_attr' => 'notification_configuration_array',
+                    'trans' => erTranslationClassLhTranslation::getInstance()->getTranslation('abstract/widgettheme','Notification title'),
+                    'required' => false,
+                    'hidden' => true,
+                    'nginit' => true,
+                    'validation_definition' => new ezcInputFormDefinitionElement(
+                        ezcInputFormDefinitionElement::OPTIONAL, 'unsafe_raw'
+                )),
    		);
 erLhcoreClassChatEventDispatcher::getInstance()->dispatch('lhabstract.erlhabstractmodelwidgettheme.fields',array('fields' => & $fields));
 

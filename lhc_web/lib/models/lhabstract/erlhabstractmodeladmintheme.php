@@ -28,8 +28,7 @@ class erLhAbstractModelAdminTheme {
     
         erLhcoreClassAbstract::getSession()->delete($this);
     }
-    
-    
+
 	public function getState()
 	{
 		$stateArray = array(
@@ -40,6 +39,8 @@ class erLhAbstractModelAdminTheme {
             'static_content' => $this->static_content,
             'static_js_content' => $this->static_js_content,
             'static_css_content' => $this->static_css_content,
+            'css_attributes' => $this->css_attributes,
+            'user_id' => $this->user_id,
 		);
 
 		return $stateArray;
@@ -49,6 +50,16 @@ class erLhAbstractModelAdminTheme {
 	{
 		return $this->name;
 	}
+
+	public function getFields()
+    {
+        return include 'lib/core/lhabstract/fields/erlhabstractmodeladmintheme.php';
+    }
+
+    public function beforeSave()
+    {
+        $this->css_attributes = json_encode(array_filter($this->css_attributes_array));
+    }
 
 	/**
 	 * Removes attributes if required
@@ -133,6 +144,21 @@ class erLhAbstractModelAdminTheme {
 	            return $this->replace_array_all;
 	            break;
 
+            case 'css_attributes_array':
+                $attr = str_replace('_array','',$var);
+                if (!empty($this->{$attr})) {
+                    $jsonData = json_decode($this->{$attr},true);
+                    if ($jsonData !== null) {
+                        $this->{$var} = $jsonData;
+                    } else {
+                        $this->{$var} = array();
+                    }
+                } else {
+                    $this->{$var} = array();
+                }
+                return $this->{$var};
+                break;
+
             case 'header_content_front':
                 $this->header_content_front = '';
                 if ($this->header_content != '') {
@@ -140,6 +166,19 @@ class erLhAbstractModelAdminTheme {
                 }
                 return $this->header_content_front;
                 break;
+
+            case 'user':
+                $this->user = false;
+                if ($this->user_id > 0) {
+                    try {
+                        $this->user = erLhcoreClassModelUser::fetch($this->user_id,true);
+                    } catch (Exception $e) {
+                        $this->user = false;
+                    }
+                }
+                return $this->user;
+                break;
+
 	        default:
 	            ;
 	            break;
@@ -153,4 +192,6 @@ class erLhAbstractModelAdminTheme {
 	public $static_content = '';
 	public $static_js_content = '';
 	public $static_css_content = '';
+	public $css_attributes = '';
+	public $user_id = 0;
 }

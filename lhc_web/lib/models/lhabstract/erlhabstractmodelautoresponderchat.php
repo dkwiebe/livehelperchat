@@ -40,7 +40,7 @@ class erLhAbstractModelAutoResponderChat
 
                 if ($this->auto_responder->ignore_pa_chat == 0 || ($this->auto_responder->ignore_pa_chat == 1 && $this->chat->user_id == 0)) { // Do not send messages to assigned pending chats
 
-                    if ($this->wait_timeout_send <= 0 && $this->auto_responder->wait_timeout > 0 && ! empty($this->auto_responder->timeout_message) && (time() - $this->chat->time) > ($this->auto_responder->wait_timeout * ($this->auto_responder->repeat_number - (abs($this->wait_timeout_send))))) {
+                    if ($this->wait_timeout_send <= 0 && $this->auto_responder->wait_timeout > 0 && ! empty($this->auto_responder->timeout_message) && (time() - ($this->chat->last_op_msg_time > 0 ? $this->chat->last_op_msg_time : ($this->chat->pnd_time > 0 ? $this->chat->pnd_time : $this->chat->time))) > ($this->auto_responder->wait_timeout * ($this->auto_responder->repeat_number - (abs($this->wait_timeout_send))))) {
 
                         $errors = array();
                         erLhcoreClassChatEventDispatcher::getInstance()->dispatch('chat.before_auto_responder_triggered', array(
@@ -75,13 +75,14 @@ class erLhAbstractModelAutoResponderChat
                         }
                     } elseif ($this->pending_send_status >= 1 && $this->pending_send_status < 5) {
                         for ($i = 5; $i >= 2; $i --) {
-                            if ($this->pending_send_status < $i && $this->auto_responder->{'wait_timeout_' . $i} > 0 && $this->auto_responder->{'wait_timeout_' . $i} < (time() - $this->chat->time) && ! empty($this->auto_responder->{'timeout_message_' . $i})) {
+                            if ($this->pending_send_status < $i && $this->auto_responder->{'wait_timeout_' . $i} > 0 && $this->auto_responder->{'wait_timeout_' . $i} < (time() - ($this->chat->last_op_msg_time > 0 ? $this->chat->last_op_msg_time : ($this->chat->pnd_time > 0 ? $this->chat->pnd_time : $this->chat->time))) && ! empty($this->auto_responder->{'timeout_message_' . $i})) {
 
                                 $this->pending_send_status = $i;
                                 $this->saveThis();
 
                                 $msg = new erLhcoreClassModelmsg();
                                 $msg->msg = trim($this->auto_responder->{'timeout_message_' . $i});
+                                $msg->meta_msg = $this->auto_responder->getMeta($this->chat, 'pending');
                                 $msg->chat_id = $this->chat->id;
                                 $msg->name_support = $this->auto_responder->operator != '' ? $this->auto_responder->operator : erTranslationClassLhTranslation::getInstance()->getTranslation('chat/startchat', 'Live Support');
                                 $msg->user_id = - 2;
@@ -97,36 +98,45 @@ class erLhAbstractModelAutoResponderChat
 
             } elseif ($this->chat->status == erLhcoreClassModelChat::STATUS_ACTIVE_CHAT) {
 
-                if ($this->chat->lsync < time() - 90 &&
-                    in_array($this->chat->device_type,array(1,2)) &&
-                    $this->active_send_status < $this->auto_responder->wait_timeout_reply_total
-                ) {
+                $botConfiguration = $this->auto_responder->bot_configuration_array;
 
-                    $lsync = $this->chat->lsync;
-                    $diff = time() - $lsync;
-                    $this->chat->lsync = time();
-                    $this->chat->last_op_msg_time = time() - $this->auto_responder->{'wait_timeout_reply_' . ($this->active_send_status - 1)}-20;
-                    $this->chat->last_user_msg_time = $this->chat->last_op_msg_time - 1;
+                // Do not reset auto responder if visitor was redirected to survey
+                if (
+                    !(isset($botConfiguration['dreset_survey']) && $botConfiguration['dreset_survey'] == 1 && $this->chat->status_sub == erLhcoreClassModelChat::STATUS_SUB_SURVEY_SHOW) &&
+                    (isset($botConfiguration['mint_reset']) && $botConfiguration['mint_reset'] > 0) &&
+                    (isset($botConfiguration['maxt_reset']) && $botConfiguration['maxt_reset'] > 0))
+                {
+                    if ( (time() - $this->chat->lsync > $botConfiguration['mint_reset']) &&
+                         (time() - $this->chat->lsync < $botConfiguration['maxt_reset']) &&
+                         in_array($this->chat->device_type,array(1,2)) &&
+                         $this->active_send_status < $this->auto_responder->wait_timeout_reply_total
+                    ) {
+                        $lsync = $this->chat->lsync;
+                        $diff = time() - $lsync;
+                        $this->chat->lsync = time();
+                        $this->chat->last_op_msg_time = time() - $this->auto_responder->{'wait_timeout_reply_' . ($this->active_send_status - 1)}-20;
+                        $this->chat->last_user_msg_time = $this->chat->last_op_msg_time - 1;
 
-                    if ($this->chat->status_sub == erLhcoreClassModelChat::STATUS_SUB_SURVEY_SHOW) {
-                        $this->chat->status_sub = erLhcoreClassModelChat::STATUS_SUB_DEFAULT;
+                        if ($this->chat->status_sub == erLhcoreClassModelChat::STATUS_SUB_SURVEY_SHOW) {
+                            $this->chat->status_sub = erLhcoreClassModelChat::STATUS_SUB_DEFAULT;
+                        }
+
+                        $msg = new erLhcoreClassModelmsg();
+
+                        if ($lsync > 0) {
+                            $msg->msg = erTranslationClassLhTranslation::getInstance()->getTranslation('chat/closechatadmin', 'Visitor auto responder was reset because of sync timeout, returned after') . ' ' . $diff . ' ' . erTranslationClassLhTranslation::getInstance()->getTranslation('chat/closechatadmin', 'seconds!');
+                        } else {
+                            $msg->msg = erTranslationClassLhTranslation::getInstance()->getTranslation('chat/closechatadmin', 'Visitor auto responder was reset because the visitor returned!');
+                        }
+
+                        $msg->chat_id = $this->chat->id;
+                        $msg->user_id = - 1;
+                        $msg->time = time();
+                        erLhcoreClassChat::getSession()->save($msg);
+
+                        $this->chat->last_msg_id = $msg->id;
+                        $this->chat->updateThis();
                     }
-
-                    $msg = new erLhcoreClassModelmsg();
-
-                    if ($lsync > 0) {
-                        $msg->msg = erTranslationClassLhTranslation::getInstance()->getTranslation('chat/closechatadmin', 'Visitor auto responder was reset because of sync timeout, returned after') . ' ' . $diff . ' ' . erTranslationClassLhTranslation::getInstance()->getTranslation('chat/closechatadmin', 'seconds!');
-                    } else {
-                        $msg->msg = erTranslationClassLhTranslation::getInstance()->getTranslation('chat/closechatadmin', 'Visitor auto responder was reset because the visitor returned!');
-                    }
-
-                    $msg->chat_id = $this->chat->id;
-                    $msg->user_id = - 1;
-                    $msg->time = time();
-                    erLhcoreClassChat::getSession()->save($msg);
-
-                    $this->chat->last_msg_id = $msg->id;
-                    $this->chat->updateThis();
                 }
 
                 if ($this->chat->status_sub != erLhcoreClassModelChat::STATUS_SUB_ON_HOLD) {
@@ -163,6 +173,7 @@ class erLhAbstractModelAutoResponderChat
 
                                 $msg = new erLhcoreClassModelmsg();
                                 $msg->msg = trim($this->auto_responder->{'timeout_reply_message_' . $i});
+                                $msg->meta_msg = $this->auto_responder->getMeta($this->chat, 'nreply');
                                 $msg->chat_id = $this->chat->id;
                                 $msg->name_support = $this->chat->user !== false ? $this->chat->user->name_support : ($this->auto_responder->operator != '' ? $this->auto_responder->operator : erTranslationClassLhTranslation::getInstance()->getTranslation('chat/startchat', 'Live Support'));
                                 $msg->user_id = $this->chat->user_id > 0 ? $this->chat->user_id : - 2;
@@ -188,6 +199,7 @@ class erLhAbstractModelAutoResponderChat
 
                             $msg = new erLhcoreClassModelmsg();
                             $msg->msg = trim($this->auto_responder->{'timeout_hold_message_' . $i});
+                            $msg->meta_msg = $this->auto_responder->getMeta($this->chat, 'onhold');
                             $msg->chat_id = $this->chat->id;
                             $msg->name_support = $this->chat->user !== false ? $this->chat->user->name_support : ($this->auto_responder->operator != '' ? $this->auto_responder->operator : erTranslationClassLhTranslation::getInstance()->getTranslation('chat/startchat', 'Live Support'));
                             $msg->user_id = $this->chat->user_id > 0 ? $this->chat->user_id : - 2;

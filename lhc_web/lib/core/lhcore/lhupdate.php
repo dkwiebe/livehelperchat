@@ -2,8 +2,8 @@
 
 class erLhcoreClassUpdate
 {
-	const DB_VERSION = 172;
-	const LHC_RELEASE = 297;
+	const DB_VERSION = 199;
+	const LHC_RELEASE = 324;
 
 	public static function doTablesUpdate($definition){
 		$updateInformation = self::getTablesStatus($definition);
@@ -11,7 +11,7 @@ class erLhcoreClassUpdate
 
         $errorMessages = array();
 
-		try{
+		try {
             $db->query('SET GLOBAL innodb_file_per_table=1;');
             $db->query('SET GLOBAL innodb_large_prefix=1;');
         } catch (Exception $e) {
@@ -213,7 +213,7 @@ class erLhcoreClassUpdate
     		    $removeIndexes = array_intersect($dataTableIndex['old'], $existingIndexes);
     		   
     		    foreach ($removeIndexes as $removeIndex) {
-    		        $tablesStatus[$table]['queries'][] = "ALTER TABLE `{$table}` DROP INDEX `{$removeIndex}`;";
+                    array_unshift($tablesStatus[$table]['queries'],"ALTER TABLE `{$table}` DROP INDEX `{$removeIndex}`;");
     		        $tablesStatus[$table]['error'] = true;
     		        $status[] = "{$removeIndex} legacy index was found";
     		    }
